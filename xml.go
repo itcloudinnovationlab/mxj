@@ -27,17 +27,19 @@ import (
 // If XmlCharsetReader != nil, it will be used to decode the XML, if required.
 // Note: if CustomDecoder != nil, then XmlCharsetReader is ignored;
 // set the CustomDecoder attribute instead.
-//   import (
-//	     charset "code.google.com/p/go-charset/charset"
-//	     github.com/clbanning/mxj
-//	 )
-//   ...
-//   mxj.XmlCharsetReader = charset.NewReader
-//   m, merr := mxj.NewMapXml(xmlValue)
+//
+//	  import (
+//		     charset "code.google.com/p/go-charset/charset"
+//		     github.com/clbanning/mxj
+//		 )
+//	  ...
+//	  mxj.XmlCharsetReader = charset.NewReader
+//	  m, merr := mxj.NewMapXml(xmlValue)
 var XmlCharsetReader func(charset string, input io.Reader) (io.Reader, error)
 
 // NewMapXml - convert a XML doc into a Map
 // (This is analogous to unmarshalling a JSON string to map[string]interface{} using json.Unmarshal().)
+//
 //	If the optional argument 'cast' is 'true', then values will be converted to boolean or float64 if possible.
 //
 //	Converting XML to JSON is a simple as:
@@ -67,6 +69,7 @@ func NewMapXml(xmlVal []byte, cast ...bool) (Map, error) {
 }
 
 // Get next XML doc from an io.Reader as a Map value.  Returns Map value.
+//
 //	NOTES:
 //	   1. Declarations, directives, process instructions and comments are NOT parsed.
 //	   2. The 'xmlReader' will be parsed looking for an xml.StartElement, so BOM and other
@@ -91,6 +94,7 @@ func NewMapXmlReader(xmlReader io.Reader, cast ...bool) (Map, error) {
 }
 
 // Get next XML doc from an io.Reader as a Map value.  Returns Map value and slice with the raw XML.
+//
 //	NOTES:
 //	   1. Declarations, directives, process instructions and comments are NOT parsed.
 //	   2. Due to the implementation of xml.Decoder, the raw XML off the reader is buffered to []byte
@@ -153,6 +157,7 @@ func xmlToMap(doc []byte, r bool) (map[string]interface{}, error) {
 
 // PrependAttrWithHyphen. Prepend attribute tags with a hyphen.
 // Default is 'true'. (Not applicable to NewMapXmlSeq(), mv.XmlSeq(), etc.)
+//
 //	Note:
 //		If 'false', unmarshaling and marshaling is not symmetric. Attributes will be
 //		marshal'd as <attr_tag>attr</attr_tag> and may be part of a list.
@@ -223,6 +228,7 @@ var lowerCase bool
 // Coerce all tag values to keys in lower case.  This is useful if you've got sources with variable
 // tag capitalization, and you want to use m.ValuesForKeys(), etc., with the key or path spec
 // in lower case.
+//
 //	CoerceKeysToLower() will toggle the coercion flag true|false - on|off
 //	CoerceKeysToLower(true|false) will set the coercion flag on|off
 //
@@ -307,6 +313,7 @@ var handleXMPPStreamTag bool
 // HandleXMPPStreamTag causes decoder to parse XMPP <stream:stream> elements.
 // If called with no argument, XMPP stream element handling is toggled on/off.
 // (See xmppStream_test.go for example.)
+//
 //	If called with NewMapXml, NewMapXmlReader, New MapXmlReaderRaw the "stream"
 //	element will be  returned as:
 //		map["stream"]interface{}{map[-<attrs>]interface{}}.
@@ -608,7 +615,9 @@ var checkTagToSkip func(string) bool
 // for a tag should be cast to bool or float64 when "cast" argument is 'true'.
 // (Dot tag path notation is not supported.)
 // NOTE: key may be "#text" if it's a simple element with attributes
-//       or "decodeSimpleValuesAsMap == true".
+//
+//	or "decodeSimpleValuesAsMap == true".
+//
 // NOTE: does not apply to NewMapXmlSeq... functions.
 func SetCheckTagToSkipFunc(fn func(string) bool) {
 	checkTagToSkip = fn
@@ -625,6 +634,7 @@ const (
 var useGoXmlEmptyElemSyntax bool
 
 // XmlGoEmptyElemSyntax() - <tag ...></tag> rather than <tag .../>.
+//
 //	Go's encoding/xml package marshals empty XML elements as <tag ...></tag>.  By default this package
 //	encodes empty elements as <tag .../>.  If you're marshaling Map values that include structures
 //	(which are passed to xml.Marshal for encoding), this will let you conform to the standard package.
@@ -655,18 +665,19 @@ func XmlCheckIsValid(b ...bool) {
 
 // Encode a Map as XML.  The companion of NewMapXml().
 // The following rules apply.
-//    - The key label "#text" is treated as the value for a simple element with attributes.
-//    - Map keys that begin with a hyphen, '-', are interpreted as attributes.
-//      It is an error if the attribute doesn't have a []byte, string, number, or boolean value.
-//    - Map value type encoding:
-//          > string, bool, float64, int, int32, int64, float32: per "%v" formating
-//          > []bool, []uint8: by casting to string
-//          > structures, etc.: handed to xml.Marshal() - if there is an error, the element
-//            value is "UNKNOWN"
-//    - Elements with only attribute values or are null are terminated using "/>".
-//    - If len(mv) == 1 and no rootTag is provided, then the map key is used as the root tag, possible.
-//      Thus, `{ "key":"value" }` encodes as "<key>value</key>".
-//    - To encode empty elements in a syntax consistent with encoding/xml call UseGoXmlEmptyElementSyntax().
+//   - The key label "#text" is treated as the value for a simple element with attributes.
+//   - Map keys that begin with a hyphen, '-', are interpreted as attributes.
+//     It is an error if the attribute doesn't have a []byte, string, number, or boolean value.
+//   - Map value type encoding:
+//     > string, bool, float64, int, int32, int64, float32: per "%v" formating
+//     > []bool, []uint8: by casting to string
+//     > structures, etc.: handed to xml.Marshal() - if there is an error, the element
+//     value is "UNKNOWN"
+//   - Elements with only attribute values or are null are terminated using "/>".
+//   - If len(mv) == 1 and no rootTag is provided, then the map key is used as the root tag, possible.
+//     Thus, `{ "key":"value" }` encodes as "<key>value</key>".
+//   - To encode empty elements in a syntax consistent with encoding/xml call UseGoXmlEmptyElementSyntax().
+//
 // The attributes tag=value pairs are alphabetized by "tag".  Also, when encoding map[string]interface{} values -
 // complex elements, etc. - the key:value pairs are alphabetized by key so the resulting tags will appear sorted.
 func (mv Map) Xml(rootTag ...string) ([]byte, error) {
@@ -778,6 +789,7 @@ func (mv Map) XmlIndentWriterRaw(xmlWriter io.Writer, prefix, indent string, roo
 var xhandlerPollInterval = time.Millisecond
 
 // Bulk process XML using handlers that process a Map value.
+//
 //	'rdr' is an io.Reader for XML (stream)
 //	'mapHandler' is the Map processor. Return of 'false' stops io.Reader processing.
 //	'errHandler' is the error processor. Return of 'false' stops io.Reader processing and returns the error.
@@ -817,6 +829,7 @@ func HandleXmlReader(xmlReader io.Reader, mapHandler func(Map) bool, errHandler 
 }
 
 // Bulk process XML using handlers that process a Map value and the raw XML.
+//
 //	'rdr' is an io.Reader for XML (stream)
 //	'mapHandler' is the Map and raw XML - []byte - processor. Return of 'false' stops io.Reader processing.
 //	'errHandler' is the error and raw XML processor. Return of 'false' stops io.Reader processing and returns the error.
@@ -1073,9 +1086,15 @@ func marshalMapToXmlIndent(doIndent bool, b *bytes.Buffer, key string, value int
 					}
 					attrlist[n][0] = k[lenAttrPrefix:]
 					attrlist[n][1] = ss
-				case float64, bool, int, int32, int64, float32, json.Number:
+				case float64, float32:
 					attrlist[n][0] = k[lenAttrPrefix:]
-					attrlist[n][1] = fmt.Sprintf("%v", v)
+					attrlist[n][1] = fmt.Sprintf("%.2f", v)
+				case bool:
+					attrlist[n][0] = k[lenAttrPrefix:]
+					attrlist[n][1] = fmt.Sprintf("%t", v)
+				case int, int32, int64, json.Number:
+					attrlist[n][0] = k[lenAttrPrefix:]
+					attrlist[n][1] = fmt.Sprintf("%d", v)
 				case []byte:
 					if xmlEscapeChars {
 						ss = escapeChars(string(v.([]byte)))
@@ -1304,8 +1323,20 @@ func marshalMapToXmlIndent(doIndent bool, b *bytes.Buffer, key string, value int
 					return err
 				}
 			}
-		case float64, bool, int, int32, int64, float32, json.Number:
-			v := fmt.Sprintf("%v", value)
+		case float64, float32:
+			v := fmt.Sprintf("%.2f", value)
+			elen = len(v) // always > 0
+			if _, err = b.WriteString(">" + v); err != nil {
+				return err
+			}
+		case bool:
+			v := fmt.Sprintf("%t", value)
+			elen = len(v) // always > 0
+			if _, err = b.WriteString(">" + v); err != nil {
+				return err
+			}
+		case int, int32, int64, json.Number:
+			v := fmt.Sprintf("%d", value)
 			elen = len(v) // always > 0
 			if _, err = b.WriteString(">" + v); err != nil {
 				return err

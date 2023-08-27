@@ -32,6 +32,25 @@ func TestBom(t *testing.T) {
 	}
 }
 
+func TestNewFromMap(t *testing.T) {
+	fmt.Println("TestBomDataSeq ...")
+	m, err := NewMapXmlSeq(bomdata)
+	if err != nil {
+		t.Fatalf("err: didn't find xml.StartElement")
+	}
+	fmt.Printf("m: %v\n", m)
+	j, _ := m.Xml()
+	fmt.Println("m:", string(j))
+	mClone, errClone := NewSeqFromMap(m)
+	if errClone != nil {
+		t.Fatalf("err: didn't find xml.StartElement")
+	}
+	if mClone.StringIndent() != m.StringIndent() {
+		t.Fatalf("err: didn't find xml.StartElement")
+	}
+
+}
+
 var bomdata = append(boms[0], []byte(`<Allitems>
 	<Item>
 	</Item>

@@ -28,7 +28,8 @@ type MapSeq map[string]interface{}
 // NoRoot is returned by NewXmlSeq, etc., when a comment, directive or procinstr element is parsed
 // in the XML data stream and the element is not contained in an XML object with a root element.
 var NoRoot = errors.New("no root key")
-var NO_ROOT = NoRoot // maintain backwards compatibility
+
+//var NO_ROOT = NoRoot // maintain backwards compatibility
 
 // ------------------- NewMapXmlSeq & NewMapXmlSeqReader ... -------------------------
 
@@ -36,60 +37,82 @@ var NO_ROOT = NoRoot // maintain backwards compatibility
 // as map["#seq"]<int value>.
 // If the optional argument 'cast' is 'true', then values will be converted to boolean or float64 if possible.
 // NOTE: "#seq" key/value pairs are removed on encoding with msv.Xml() / msv.XmlIndent().
-//	• attributes are a map - map["#attr"]map["attr_key"]map[string]interface{}{"#text":<aval>, "#seq":<num>}
-//	• all simple elements are decoded as map["#text"]interface{} with a "#seq" k:v pair, as well.
-//	• lists always decode as map["list_tag"][]map[string]interface{} where the array elements are maps that
-//	  include a "#seq" k:v pair based on sequence they are decoded.  Thus, XML like:
-//	      <doc>
-//	         <ltag>value 1</ltag>
-//	         <newtag>value 2</newtag>
-//	         <ltag>value 3</ltag>
-//	      </doc>
-//	  is decoded as:
-//	    doc :
-//	      ltag :[[]interface{}]
-//	        [item: 0]
-//	          #seq :[int] 0
-//	          #text :[string] value 1
-//	        [item: 1]
-//	          #seq :[int] 2
-//	          #text :[string] value 3
-//	      newtag :
-//	        #seq :[int] 1
-//	        #text :[string] value 2
-//	  It will encode in proper sequence even though the MapSeq representation merges all "ltag" elements in an array.
-//	• comments - "<!--comment-->" -  are decoded as map["#comment"]map["#text"]"cmnt_text" with a "#seq" k:v pair.
-//	• directives - "<!text>" - are decoded as map["#directive"]map[#text"]"directive_text" with a "#seq" k:v pair.
-//	• process instructions  - "<?instr?>" - are decoded as map["#procinst"]interface{} where the #procinst value
-//	  is of map[string]interface{} type with the following keys: #target, #inst, and #seq.
-//	• comments, directives, and procinsts that are NOT part of a document with a root key will be returned as
-//	  map[string]interface{} and the error value 'NoRoot'.
-//	• note: "<![CDATA[" syntax is lost in xml.Decode parser - and is not handled here, either.
-//	   and: "\r\n" is converted to "\n"
 //
-//	NOTES:
-//	   1. The 'xmlVal' will be parsed looking for an xml.StartElement, xml.Comment, etc., so BOM and other
-//	      extraneous xml.CharData will be ignored unless io.EOF is reached first.
-//	   2. CoerceKeysToLower() is NOT recognized, since the intent here is to eventually call m.XmlSeq() to
-//	      re-encode the message in its original structure.
-//	   3. If CoerceKeysToSnakeCase() has been called, then all key values will be converted to snake case.
+//   - attributes are a map - map["#attr"]map["attr_key"]map[string]interface{}{"#text":<aval>, "#seq":<num>}
 //
-//	NAME SPACES:
-//	   1. Keys in the MapSeq value that are parsed from a <name space prefix>:<local name> tag preserve the
-//	      "<prefix>:" notation rather than stripping it as with NewMapXml().
-//	   2. Attribute keys for name space prefix declarations preserve "xmlns:<prefix>" notation.
+//   - all simple elements are decoded as map["#text"]interface{} with a "#seq" k:v pair, as well.
 //
-//	ERRORS:
-//	   1. If a NoRoot error, "no root key," is returned, check the initial map key for a "#comment",
-//	      "#directive" or #procinst" key.
-//	   2. Unmarshaling an XML doc that is formatted using the whitespace character, " ", will error, since
-//	      Decoder.RawToken treats such occurances as significant. See NewMapFormattedXmlSeq().
+//   - lists always decode as map["list_tag"][]map[string]interface{} where the array elements are maps that
+//     include a "#seq" k:v pair based on sequence they are decoded.  Thus, XML like:
+//     <doc>
+//     <ltag>value 1</ltag>
+//     <newtag>value 2</newtag>
+//     <ltag>value 3</ltag>
+//     </doc>
+//     is decoded as:
+//     doc :
+//     ltag :[[]interface{}]
+//     [item: 0]
+//     #seq :[int] 0
+//     #text :[string] value 1
+//     [item: 1]
+//     #seq :[int] 2
+//     #text :[string] value 3
+//     newtag :
+//     #seq :[int] 1
+//     #text :[string] value 2
+//     It will encode in proper sequence even though the MapSeq representation merges all "ltag" elements in an array.
+//
+//   - comments - "<!--comment-->" -  are decoded as map["#comment"]map["#text"]"cmnt_text" with a "#seq" k:v pair.
+//
+//   - directives - "<!text>" - are decoded as map["#directive"]map[#text"]"directive_text" with a "#seq" k:v pair.
+//
+//   - process instructions  - "<?instr?>" - are decoded as map["#procinst"]interface{} where the #procinst value
+//     is of map[string]interface{} type with the following keys: #target, #inst, and #seq.
+//
+//   - comments, directives, and procinsts that are NOT part of a document with a root key will be returned as
+//     map[string]interface{} and the error value 'NoRoot'.
+//
+//   - note: "<![CDATA[" syntax is lost in xml.Decode parser - and is not handled here, either.
+//     and: "\r\n" is converted to "\n"
+//
+//     NOTES:
+//     1. The 'xmlVal' will be parsed looking for an xml.StartElement, xml.Comment, etc., so BOM and other
+//     extraneous xml.CharData will be ignored unless io.EOF is reached first.
+//     2. CoerceKeysToLower() is NOT recognized, since the intent here is to eventually call m.XmlSeq() to
+//     re-encode the message in its original structure.
+//     3. If CoerceKeysToSnakeCase() has been called, then all key values will be converted to snake case.
+//
+//     NAME SPACES:
+//     1. Keys in the MapSeq value that are parsed from a <name space prefix>:<local name> tag preserve the
+//     "<prefix>:" notation rather than stripping it as with NewMapXml().
+//     2. Attribute keys for name space prefix declarations preserve "xmlns:<prefix>" notation.
+//
+//     ERRORS:
+//     1. If a NoRoot error, "no root key," is returned, check the initial map key for a "#comment",
+//     "#directive" or #procinst" key.
+//     2. Unmarshaling an XML doc that is formatted using the whitespace character, " ", will error, since
+//     Decoder.RawToken treats such occurances as significant. See NewMapFormattedXmlSeq().
 func NewMapXmlSeq(xmlVal []byte, cast ...bool) (MapSeq, error) {
 	var r bool
 	if len(cast) == 1 {
 		r = cast[0]
 	}
 	return xmlSeqToMap(xmlVal, r)
+}
+
+// NewSeqFromMap map[string]interface{} to  MapSeq.
+func NewSeqFromMap(pOldMap map[string]interface{}) (MapSeq, error) {
+	m := make(map[string]interface{}, 0)
+	for key, value := range pOldMap {
+		m[key] = value
+	}
+	return m, nil
+}
+
+// OldSeq a Map to map[string]interface{}
+func (mv Map) OldSeq() map[string]interface{} {
+	return mv
 }
 
 // NewMapFormattedXmlSeq performs the same as NewMapXmlSeq but is useful for processing XML objects that
@@ -115,6 +138,7 @@ func NewMapFormattedXmlSeq(xmlVal []byte, cast ...bool) (MapSeq, error) {
 }
 
 // NewMpaXmlSeqReader returns next XML doc from an io.Reader as a MapSeq value.
+//
 //	NOTES:
 //	   1. The 'xmlReader' will be parsed looking for an xml.StartElement, xml.Comment, etc., so BOM and other
 //	      extraneous xml.CharData will be ignored unless io.EOF is reached first.
@@ -144,6 +168,7 @@ func NewMapXmlSeqReader(xmlReader io.Reader, cast ...bool) (MapSeq, error) {
 
 // NewMapXmlSeqReaderRaw returns the  next XML doc from  an io.Reader as a MapSeq value.
 // Returns MapSeq value, slice with the raw XML, and any error.
+//
 //	NOTES:
 //	   1. Due to the implementation of xml.Decoder, the raw XML off the reader is buffered to []byte
 //	      using a ByteReader. If the io.Reader is an os.File, there may be significant performance impact.
@@ -428,20 +453,20 @@ func xmlSeqToMapParser(skey string, a []xml.Attr, p *xml.Decoder, r bool) (map[s
 
 // Xml encodes a MapSeq as XML with elements sorted on #seq.  The companion of NewMapXmlSeq().
 // The following rules apply.
-//    - The "#seq" key value is used to seqence the subelements or attributes only.
-//    - The "#attr" map key identifies the map of attribute map[string]interface{} values with "#text" key.
-//    - The "#comment" map key identifies a comment in the value "#text" map entry - <!--comment-->.
-//    - The "#directive" map key identifies a directive in the value "#text" map entry - <!directive>.
-//    - The "#procinst" map key identifies a process instruction in the value "#target" and "#inst"
-//      map entries - <?target inst?>.
-//    - Value type encoding:
-//          > string, bool, float64, int, int32, int64, float32: per "%v" formating
-//          > []bool, []uint8: by casting to string
-//          > structures, etc.: handed to xml.Marshal() - if there is an error, the element
-//            value is "UNKNOWN"
-//    - Elements with only attribute values or are null are terminated using "/>" unless XmlGoEmptyElemSystax() called.
-//    - If len(mv) == 1 and no rootTag is provided, then the map key is used as the root tag, possible.
-//      Thus, `{ "key":"value" }` encodes as "<key>value</key>".
+//   - The "#seq" key value is used to seqence the subelements or attributes only.
+//   - The "#attr" map key identifies the map of attribute map[string]interface{} values with "#text" key.
+//   - The "#comment" map key identifies a comment in the value "#text" map entry - <!--comment-->.
+//   - The "#directive" map key identifies a directive in the value "#text" map entry - <!directive>.
+//   - The "#procinst" map key identifies a process instruction in the value "#target" and "#inst"
+//     map entries - <?target inst?>.
+//   - Value type encoding:
+//     > string, bool, float64, int, int32, int64, float32: per "%v" formating
+//     > []bool, []uint8: by casting to string
+//     > structures, etc.: handed to xml.Marshal() - if there is an error, the element
+//     value is "UNKNOWN"
+//   - Elements with only attribute values or are null are terminated using "/>" unless XmlGoEmptyElemSystax() called.
+//   - If len(mv) == 1 and no rootTag is provided, then the map key is used as the root tag, possible.
+//     Thus, `{ "key":"value" }` encodes as "<key>value</key>".
 func (mv MapSeq) Xml(rootTag ...string) ([]byte, error) {
 	m := map[string]interface{}(mv)
 	var err error

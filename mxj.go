@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	Cast         = true // for clarity - e.g., mxj.NewMapXml(doc, mxj.Cast)
-	SafeEncoding = true // ditto - e.g., mv.Json(mxj.SafeEncoding)
+	Cast = true // for clarity - e.g., mxj.NewMapXml(doc, mxj.Cast)
+	//SafeEncoding = true // ditto - e.g., mv.Json(mxj.SafeEncoding)
 )
 
 type Map map[string]interface{}
@@ -21,6 +21,15 @@ type Map map[string]interface{}
 func New() Map {
 	m := make(map[string]interface{}, 0)
 	return m
+}
+
+// NewMapFromClone map[string]interface{} to  MapSeq.
+func NewMapFromClone(pOldMap map[string]interface{}) (Map, error) {
+	m := make(map[string]interface{}, 0)
+	for key, value := range pOldMap {
+		m[key] = value
+	}
+	return m, nil
 }
 
 // Cast a Map to map[string]interface{}
@@ -32,6 +41,7 @@ func (mv Map) Old() map[string]interface{} {
 // numeric, map[string]interface{}, and []interface{} values, then it can be thought
 // of as a "deep copy."  Copying a structure (or structure reference) value is subject
 // to the noted restrictions.
+//
 //	NOTE: If 'mv' includes structure values with, possibly, JSON encoding tags
 //	      then only public fields of the structure are in the new Map - and with
 //	      keys that conform to any encoding tag instructions. The structure itself will
@@ -61,6 +71,7 @@ func (mv Map) StringIndentNoTypeInfo(offset ...int) string {
 
 // writeMap - dumps the map[string]interface{} for examination.
 // 'typeInfo' causes value type to be printed.
+//
 //	'offset' is initial indentation count; typically: Write(m).
 func writeMap(m interface{}, typeInfo, root bool, offset ...int) string {
 	var indent int

@@ -110,6 +110,15 @@ func NewSeqFromMap(pOldMap map[string]interface{}) (MapSeq, error) {
 	return m, nil
 }
 
+// NewSeqFromMap2 map[string]interface{} to  MapSeq.
+func NewSeqFromMap2(pOldMap map[string]interface{}) (MapSeq, error) {
+	m := make(map[string]interface{})
+	for key, value := range pOldMap {
+		m[key] = value
+	}
+	return m, nil
+}
+
 // OldSeq a Map to map[string]interface{}
 func (mv MapSeq) OldSeq() map[string]interface{} {
 	return mv

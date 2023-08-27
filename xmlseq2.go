@@ -7,12 +7,11 @@ package mxj
 // ---------------- expose Map methods to MapSeq type ---------------------------
 
 // Pretty print a Map.
-func (msv MapSeq) StringIndent(offset ...int) string {
-	return writeMap(map[string]interface{}(msv), true, true, offset...)
+func (mv MapSeq) StringIndent(offset ...int) string {
+	return writeMap(map[string]interface{}(mv), true, true, offset...)
 }
 
 // Pretty print a Map without the value type information - just key:value entries.
-func (msv MapSeq) StringIndentNoTypeInfo(offset ...int) string {
-	return writeMap(map[string]interface{}(msv), false, true, offset...)
+func (mv MapSeq) StringIndentNoTypeInfo(offset ...int) string {
+	return writeMap(map[string]interface{}(mv), false, true, offset...)
 }
-

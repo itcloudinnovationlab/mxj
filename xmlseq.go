@@ -103,7 +103,7 @@ func NewMapXmlSeq(xmlVal []byte, cast ...bool) (MapSeq, error) {
 
 // NewSeqFromMap map[string]interface{} to  MapSeq.
 func NewSeqFromMap(pOldMap map[string]interface{}) (MapSeq, error) {
-	m := make(map[string]interface{}, 0)
+	m := make(map[string]interface{})
 	for key, value := range pOldMap {
 		m[key] = value
 	}
@@ -111,7 +111,7 @@ func NewSeqFromMap(pOldMap map[string]interface{}) (MapSeq, error) {
 }
 
 // OldSeq a Map to map[string]interface{}
-func (mv Map) OldSeq() map[string]interface{} {
+func (mv MapSeq) OldSeq() map[string]interface{} {
 	return mv
 }
 
@@ -137,7 +137,7 @@ func NewMapFormattedXmlSeq(xmlVal []byte, cast ...bool) (MapSeq, error) {
 	return xmlSeqToMap(xmlVal, c)
 }
 
-// NewMpaXmlSeqReader returns next XML doc from an io.Reader as a MapSeq value.
+// NewMapXmlSeqReader returns next XML doc from an io.Reader as a MapSeq value.
 //
 //	NOTES:
 //	   1. The 'xmlReader' will be parsed looking for an xml.StartElement, xml.Comment, etc., so BOM and other

@@ -707,7 +707,7 @@ func mapToXmlSeqIndent(doIndent bool, s *string, key string, value interface{}, 
 				*s += ">" + stmp
 				endTag = true
 				elen = 1
-			} else if number, okNumber := v.(json.Number); okNumber && stmp != "" {
+			} else if number, okNumber := v.(json.Number); okNumber && number.String() != "" {
 				f, err := number.Float64()
 				if err != nil {
 					isSimple = true

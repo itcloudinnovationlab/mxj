@@ -680,7 +680,9 @@ func mapToXmlSeqIndent(doIndent bool, s *string, key string, value interface{}, 
 						ss = vv[textK].(string)
 					}
 					*s += ` ` + a.k + `="` + ss + `"`
-				case float64, bool, int, int32, int64, float32:
+				case float64, float32:
+					*s += ` ` + a.k + `="` + fmt.Sprintf("%.2f", vv[textK]) + `"`
+				case bool, int, int32, int64:
 					*s += ` ` + a.k + `="` + fmt.Sprintf("%v", vv[textK]) + `"`
 				case []byte:
 					if xmlEscapeChars {
@@ -713,7 +715,7 @@ func mapToXmlSeqIndent(doIndent bool, s *string, key string, value interface{}, 
 					isSimple = true
 					break
 				}
-				numberFloat := fmt.Sprintf("%f", f)
+				numberFloat := fmt.Sprintf("%.2f", f)
 				if xmlEscapeChars {
 					numberFloat = escapeChars(numberFloat)
 				}
@@ -817,7 +819,13 @@ func mapToXmlSeqIndent(doIndent bool, s *string, key string, value interface{}, 
 			if elen > 0 {
 				*s += ">" + ss
 			}
-		case float64, bool, int, int32, int64, float32:
+		case float64, float32:
+			v := fmt.Sprintf("%.2f", value)
+			elen = len(v)
+			if elen > 0 {
+				*s += ">" + v
+			}
+		case bool, int, int32, int64:
 			v := fmt.Sprintf("%v", value)
 			elen = len(v)
 			if elen > 0 {

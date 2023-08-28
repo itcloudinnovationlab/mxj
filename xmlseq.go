@@ -9,6 +9,7 @@ package mxj
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -704,6 +705,19 @@ func mapToXmlSeqIndent(doIndent bool, s *string, key string, value interface{}, 
 					stmp = escapeChars(stmp)
 				}
 				*s += ">" + stmp
+				endTag = true
+				elen = 1
+			} else if number, ok := v.(json.Number); ok && stmp != "" {
+				f, err := number.Float64()
+				if err != nil {
+					isSimple = true
+					break
+				}
+				numberFloat := fmt.Sprintf("%f", f)
+				if xmlEscapeChars {
+					numberFloat = escapeChars(numberFloat)
+				}
+				*s += ">" + numberFloat
 				endTag = true
 				elen = 1
 			}

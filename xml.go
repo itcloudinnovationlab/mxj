@@ -1117,11 +1117,14 @@ func marshalMapToXmlIndent(doIndent bool, b *bytes.Buffer, key string, value int
 					attrlist[n][0] = k[lenAttrPrefix:]
 					attrlist[n][1] = fmt.Sprintf("%t", v)
 				case int, int32, int64:
+					fmt.Println("int, int32, int64", value)
 					attrlist[n][0] = k[lenAttrPrefix:]
 					attrlist[n][1] = fmt.Sprintf("%d", v)
 				case json.Number:
+					fmt.Println("json.Number", value)
 					attrlist[n][0] = k[lenAttrPrefix:]
-					attrlist[n][1] = v.(json.Number).String()
+					value, _ := v.(json.Number).Float64()
+					attrlist[n][1] = fmt.Sprintf("%.2f", value)
 				case []byte:
 					if xmlEscapeChars {
 						ss = escapeChars(string(v.([]byte)))
@@ -1363,13 +1366,16 @@ func marshalMapToXmlIndent(doIndent bool, b *bytes.Buffer, key string, value int
 				return err
 			}
 		case int, int32, int64:
+			fmt.Println("int, int32, int64", value)
 			v := fmt.Sprintf("%d", value)
 			elen = len(v) // always > 0
 			if _, err = b.WriteString(">" + v); err != nil {
 				return err
 			}
 		case json.Number:
-			v := value.(json.Number).String()
+			fmt.Println("json.Number", value)
+			values, _ := value.(json.Number).Float64()
+			v := fmt.Sprintf("%.2f", values)
 			elen = len(v) // always > 0
 			if _, err = b.WriteString(">" + v); err != nil {
 				return err

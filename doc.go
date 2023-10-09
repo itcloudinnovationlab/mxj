@@ -11,9 +11,11 @@ mxj supplants the legacy x2j and j2x packages. The subpackage x2j-wrapper is pro
 Note: this library was designed for processing ad hoc anonymous messages.  Bulk processing large data sets may be much more efficiently performed using the encoding/xml or encoding/json packages from Go's standard library directly.
 
 Related Packages:
+
 	checkxml: github.com/clbanning/checkxml provides functions for validating XML data.
 
 Notes:
+
 	2022.11.28: v2.7 - add SetGlobalKeyMapPrefix to change default prefix, '#', for default keys
 	2022.11.20: v2.6 - add NewMapForattedXmlSeq for XML docs formatted with whitespace character
 	2021.02.02: v2.5 - add XmlCheckIsValid toggle to force checking that the encoded XML is valid
@@ -44,100 +46,99 @@ Notes:
 
 SUMMARY
 
-   type Map map[string]interface{}
+	type Map map[string]interface{}
 
-   Create a Map value, 'mv', from any map[string]interface{} value, 'v':
-      mv := Map(v)
+	Create a Map value, 'mv', from any map[string]interface{} value, 'v':
+	   mv := Map(v)
 
-   Unmarshal / marshal XML as a Map value, 'mv':
-      mv, err := NewMapXml(xmlValue) // unmarshal
-      xmlValue, err := mv.Xml()      // marshal
+	Unmarshal / marshal XML as a Map value, 'mv':
+	   mv, err := NewMapXml(xmlValue) // unmarshal
+	   xmlValue, err := mv.Xml()      // marshal
 
-   Unmarshal XML from an io.Reader as a Map value, 'mv':
-      mv, err := NewMapXmlReader(xmlReader)         // repeated calls, as with an os.File Reader, will process stream
-      mv, raw, err := NewMapXmlReaderRaw(xmlReader) // 'raw' is the raw XML that was decoded
+	Unmarshal XML from an io.Reader as a Map value, 'mv':
+	   mv, err := NewMapXmlReader(xmlReader)         // repeated calls, as with an os.File Reader, will process stream
+	   mv, raw, err := NewMapXmlReaderRaw(xmlReader) // 'raw' is the raw XML that was decoded
 
-   Marshal Map value, 'mv', to an XML Writer (io.Writer):
-      err := mv.XmlWriter(xmlWriter)
-      raw, err := mv.XmlWriterRaw(xmlWriter) // 'raw' is the raw XML that was written on xmlWriter
+	Marshal Map value, 'mv', to an XML Writer (io.Writer):
+	   err := mv.XmlWriter(xmlWriter)
+	   raw, err := mv.XmlWriterRaw(xmlWriter) // 'raw' is the raw XML that was written on xmlWriter
 
-   Also, for prettified output:
-      xmlValue, err := mv.XmlIndent(prefix, indent, ...)
-      err := mv.XmlIndentWriter(xmlWriter, prefix, indent, ...)
-      raw, err := mv.XmlIndentWriterRaw(xmlWriter, prefix, indent, ...)
+	Also, for prettified output:
+	   xmlValue, err := mv.XmlIndent(prefix, indent, ...)
+	   err := mv.XmlIndentWriter(xmlWriter, prefix, indent, ...)
+	   raw, err := mv.XmlIndentWriterRaw(xmlWriter, prefix, indent, ...)
 
-   Bulk process XML with error handling (note: handlers must return a boolean value):
-      err := HandleXmlReader(xmlReader, mapHandler(Map), errHandler(error))
-      err := HandleXmlReaderRaw(xmlReader, mapHandler(Map, []byte), errHandler(error, []byte))
+	Bulk process XML with error handling (note: handlers must return a boolean value):
+	   err := HandleXmlReader(xmlReader, mapHandler(Map), errHandler(error))
+	   err := HandleXmlReaderRaw(xmlReader, mapHandler(Map, []byte), errHandler(error, []byte))
 
-   Converting XML to JSON: see Examples for NewMapXml and HandleXmlReader.
+	Converting XML to JSON: see Examples for NewMapXml and HandleXmlReader.
 
-   There are comparable functions and methods for JSON processing.
+	There are comparable functions and methods for JSON processing.
 
-   Arbitrary structure values can be decoded to / encoded from Map values:
-      mv, err := NewMapStruct(structVal)
-      err := mv.Struct(structPointer)
+	Arbitrary structure values can be decoded to / encoded from Map values:
+	   mv, err := NewMapStruct(structVal)
+	   err := mv.Struct(structPointer)
 
-   To work with XML tag values, JSON or Map key values or structure field values, decode the XML, JSON
-   or structure to a Map value, 'mv', or cast a map[string]interface{} value to a Map value, 'mv', then:
-      paths := mv.PathsForKey(key)
-      path := mv.PathForKeyShortest(key)
-      values, err := mv.ValuesForKey(key, subkeys)
-      values, err := mv.ValuesForPath(path, subkeys) // 'path' can be dot-notation with wildcards and indexed arrays.
-      count, err := mv.UpdateValuesForPath(newVal, path, subkeys)
+	To work with XML tag values, JSON or Map key values or structure field values, decode the XML, JSON
+	or structure to a Map value, 'mv', or cast a map[string]interface{} value to a Map value, 'mv', then:
+	   paths := mv.PathsForKey(key)
+	   path := mv.PathForKeyShortest(key)
+	   values, err := mv.ValuesForKey(key, subkeys)
+	   values, err := mv.ValuesForPath(path, subkeys) // 'path' can be dot-notation with wildcards and indexed arrays.
+	   count, err := mv.UpdateValuesForPath(newVal, path, subkeys)
 
-   Get everything at once, irrespective of path depth:
-      leafnodes := mv.LeafNodes()
-      leafvalues := mv.LeafValues()
+	Get everything at once, irrespective of path depth:
+	   leafnodes := mv.LeafNodes()
+	   leafvalues := mv.LeafValues()
 
-   A new Map with whatever keys are desired can be created from the current Map and then encoded in XML
-   or JSON. (Note: keys can use dot-notation. 'oldKey' can also use wildcards and indexed arrays.)
-      newMap, err := mv.NewMap("oldKey_1:newKey_1", "oldKey_2:newKey_2", ..., "oldKey_N:newKey_N")
-      newMap, err := mv.NewMap("oldKey1", "oldKey3", "oldKey5") // a subset of 'mv'; see "examples/partial.go"
-      newXml, err := newMap.Xml()   // for example
-      newJson, err := newMap.Json() // ditto
+	A new Map with whatever keys are desired can be created from the current Map and then encoded in XML
+	or JSON. (Note: keys can use dot-notation. 'oldKey' can also use wildcards and indexed arrays.)
+	   newMap, err := mv.NewMap("oldKey_1:newKey_1", "oldKey_2:newKey_2", ..., "oldKey_N:newKey_N")
+	   newMap, err := mv.NewMap("oldKey1", "oldKey3", "oldKey5") // a subset of 'mv'; see "examples/partial.go"
+	   newXml, err := newMap.Xml()   // for example
+	   newJson, err := newMap.Json() // ditto
 
 XML PARSING CONVENTIONS
 
-   Using NewMapXml()
+	Using NewMapXml()
 
-   - Attributes are parsed to `map[string]interface{}` values by prefixing a hyphen, `-`,
-     to the attribute label. (Unless overridden by `PrependAttrWithHyphen(false)` or
-     `SetAttrPrefix()`.)
-   - If the element is a simple element and has attributes, the element value
-     is given the key `#text` for its `map[string]interface{}` representation.  (See
-     the 'atomFeedString.xml' test data, below.)
-   - XML comments, directives, and process instructions are ignored.
-   - If CoerceKeysToLower() has been called, then the resultant keys will be lower case.
+	- Attributes are parsed to `map[string]interface{}` values by prefixing a hyphen, `-`,
+	  to the attribute label. (Unless overridden by `PrependAttrWithHyphen(false)` or
+	  `SetAttrPrefix()`.)
+	- If the element is a simple element and has attributes, the element value
+	  is given the key `#text` for its `map[string]interface{}` representation.  (See
+	  the 'atomFeedString.xml' test data, below.)
+	- XML comments, directives, and process instructions are ignored.
+	- If CoerceKeysToLower() has been called, then the resultant keys will be lower case.
 
-   Using NewMapXmlSeq()
+	Using NewMapXmlSeq()
 
-   - Attributes are parsed to `map["#attr"]map[<attr_label>]map[string]interface{}`values
-     where the `<attr_label>` value has "#text" and "#seq" keys - the "#text" key holds the 
-     value for `<attr_label>`.
-   - All elements, except for the root, have a "#seq" key.
-   - Comments, directives, and process instructions are unmarshalled into the Map using the
-     keys "#comment", "#directive", and "#procinst", respectively. (See documentation for more
-     specifics.)
-   - Name space syntax is preserved: 
-      - <ns:key>something</ns.key> parses to map["ns:key"]interface{}{"something"}
-      - xmlns:ns="http://myns.com/ns" parses to map["xmlns:ns"]interface{}{"http://myns.com/ns"}
+	- Attributes are parsed to `map["#attr"]map[<attr_label>]map[string]interface{}`values
+	  where the `<attr_label>` value has "#text" and "#seq" keys - the "#text" key holds the
+	  value for `<attr_label>`.
+	- All elements, except for the root, have a "#seq" key.
+	- Comments, directives, and process instructions are unmarshalled into the Map using the
+	  keys "#comment", "#directive", and "#procinst", respectively. (See documentation for more
+	  specifics.)
+	- Name space syntax is preserved:
+	   - <ns:key>something</ns.key> parses to map["ns:key"]interface{}{"something"}
+	   - xmlns:ns="http://myns.com/ns" parses to map["xmlns:ns"]interface{}{"http://myns.com/ns"}
 
-   Both
+	Both
 
-   - By default, "Nan", "Inf", and "-Inf" values are not cast to float64.  If you want them
-     to be cast, set a flag to cast them  using CastNanInf(true).
+	- By default, "Nan", "Inf", and "-Inf" values are not cast to float64.  If you want them
+	  to be cast, set a flag to cast them  using CastNanInf(true).
 
 XML ENCODING CONVENTIONS
-   
-   - 'nil' Map values, which may represent 'null' JSON values, are encoded as "<tag/>".
-     NOTE: the operation is not symmetric as "<tag/>" elements are decoded as 'tag:""' Map values,
-           which, then, encode in JSON as '"tag":""' values..
-   - ALSO: there is no guarantee that the encoded XML doc will be the same as the decoded one.  (Go
-           randomizes the walk through map[string]interface{} values.) If you plan to re-encode the
-           Map value to XML and want the same sequencing of elements look at NewMapXmlSeq() and
-           mv.XmlSeq() - these try to preserve the element sequencing but with added complexity when
-           working with the Map representation.
 
+  - 'nil' Map values, which may represent 'null' JSON values, are encoded as "<tag/>".
+    NOTE: the operation is not symmetric as "<tag/>" elements are decoded as 'tag:""' Map values,
+    which, then, encode in JSON as '"tag":""' values..
+  - ALSO: there is no guarantee that the encoded XML doc will be the same as the decoded one.  (Go
+    randomizes the walk through map[string]interface{} values.) If you plan to re-encode the
+    Map value to XML and want the same sequencing of elements look at NewMapXmlSeq() and
+    mv.XmlSeq() - these try to preserve the element sequencing but with added complexity when
+    working with the Map representation.
 */
 package mxj

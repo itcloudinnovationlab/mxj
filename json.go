@@ -105,13 +105,14 @@ func (mv Map) JsonIndentWriterRaw(jsonWriter io.Writer, prefix, indent string, s
 // --------------------------- read JSON -----------------------------
 
 // Decode numericvalues as json.Number type Map values - see encoding/json#Number.
-// NOTE: this is for decoding JSON into a Map with NewMapJson(), NewMapJsonReader(), 
+// NOTE: this is for decoding JSON into a Map with NewMapJson(), NewMapJsonReader(),
 // etc.; it does not affect NewMapXml(), etc.  The XML encoders mv.Xml() and mv.XmlIndent()
 // do recognize json.Number types; a JSON object can be decoded to a Map with json.Number
 // value types and the resulting Map can be correctly encoded into a XML object.
 var JsonUseNumber bool
 
 // Just a wrapper on json.Unmarshal
+//
 //	Converting JSON to XML is a simple as:
 //		...
 //		mapVal, merr := mxj.NewMapJson(jsonVal)
@@ -122,6 +123,7 @@ var JsonUseNumber bool
 //		if xerr != nil {
 //			// handle error
 //		}
+//
 // NOTE: as a special case, passing a list, e.g., [{"some-null-value":"", "a-non-null-value":"bar"}],
 // will be interpreted as having the root key 'object' prepended - {"object":[ ... ]} - to unmarshal to a Map.
 // See mxj/j2x/j2x_test.go.
@@ -147,10 +149,11 @@ func NewMapJson(jsonVal []byte) (Map, error) {
 }
 
 // Retrieve a Map value from an io.Reader.
-//  NOTE: The raw JSON off the reader is buffered to []byte using a ByteReader. If the io.Reader is an
-//        os.File, there may be significant performance impact. If the io.Reader is wrapping a []byte
-//        value in-memory, however, such as http.Request.Body you CAN use it to efficiently unmarshal
-//        a JSON object.
+//
+//	NOTE: The raw JSON off the reader is buffered to []byte using a ByteReader. If the io.Reader is an
+//	      os.File, there may be significant performance impact. If the io.Reader is wrapping a []byte
+//	      value in-memory, however, such as http.Request.Body you CAN use it to efficiently unmarshal
+//	      a JSON object.
 func NewMapJsonReader(jsonReader io.Reader) (Map, error) {
 	jb, err := getJson(jsonReader)
 	if err != nil || len(*jb) == 0 {
@@ -162,10 +165,11 @@ func NewMapJsonReader(jsonReader io.Reader) (Map, error) {
 }
 
 // Retrieve a Map value and raw JSON - []byte - from an io.Reader.
-//  NOTE: The raw JSON off the reader is buffered to []byte using a ByteReader. If the io.Reader is an
-//        os.File, there may be significant performance impact. If the io.Reader is wrapping a []byte
-//        value in-memory, however, such as http.Request.Body you CAN use it to efficiently unmarshal
-//        a JSON object and retrieve the raw JSON in a single call.
+//
+//	NOTE: The raw JSON off the reader is buffered to []byte using a ByteReader. If the io.Reader is an
+//	      os.File, there may be significant performance impact. If the io.Reader is wrapping a []byte
+//	      value in-memory, however, such as http.Request.Body you CAN use it to efficiently unmarshal
+//	      a JSON object and retrieve the raw JSON in a single call.
 func NewMapJsonReaderRaw(jsonReader io.Reader) (Map, []byte, error) {
 	jb, err := getJson(jsonReader)
 	if err != nil || len(*jb) == 0 {
@@ -245,6 +249,7 @@ var jhandlerPollInterval = time.Duration(1e6)
 // This avoids treating one or other as a special case and discussing the underlying stdlib logic.
 
 // Bulk process JSON using handlers that process a Map value.
+//
 //	'rdr' is an io.Reader for the JSON (stream).
 //	'mapHandler' is the Map processing handler. Return of 'false' stops io.Reader processing.
 //	'errHandler' is the error processor. Return of 'false' stops io.Reader  processing and returns the error.
@@ -284,6 +289,7 @@ func HandleJsonReader(jsonReader io.Reader, mapHandler func(Map) bool, errHandle
 }
 
 // Bulk process JSON using handlers that process a Map value and the raw JSON.
+//
 //	'rdr' is an io.Reader for the JSON (stream).
 //	'mapHandler' is the Map and raw JSON - []byte - processor. Return of 'false' stops io.Reader processing.
 //	'errHandler' is the error and raw JSON processor. Return of 'false' stops io.Reader processing and returns the error.

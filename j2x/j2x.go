@@ -100,6 +100,7 @@ func JsonValuesForKeyPath(jsonVal []byte, path string, subkeys ...string) ([]int
 }
 
 // Wrap UpdateValuesForPath for JSON
+//
 //	'jsonVal' is XML value
 //	'newKeyValue' is the value to replace an existing value at the end of 'path'
 //	'path' is the dot-notation path with the key whose value is to be replaced at the end

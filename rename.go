@@ -6,7 +6,7 @@ import (
 )
 
 // RenameKey renames a key in a Map.
-// It works only for nested maps. 
+// It works only for nested maps.
 // It doesn't work for cases when the key is in a list.
 func (mv Map) RenameKey(path string, newName string) error {
 	var v bool

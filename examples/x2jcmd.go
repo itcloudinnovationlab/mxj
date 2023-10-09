@@ -5,9 +5,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/clbanning/mxj/x2j"
 	"io"
 	"os"
-	"github.com/clbanning/mxj/x2j"
 )
 
 func main() {

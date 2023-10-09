@@ -38,7 +38,7 @@ func TestCastTrue(t *testing.T) {
 func TestSetCheckTagToSkipFunc(t *testing.T) {
 	fmt.Println("------------ TestSetCheckTagToSkipFunc ...")
 	fn := func(tag string) bool {
-		list := []string{"int","false"}
+		list := []string{"int", "false"}
 		for _, v := range list {
 			if v == tag {
 				return true

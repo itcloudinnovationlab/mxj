@@ -146,4 +146,3 @@ func TestMarshalPrefixUnderscore(t *testing.T) {
 	}
 	fmt.Println(string(x))
 }
-

@@ -14,7 +14,7 @@ func main() {
 		"five":  5,
 	}
 
-	m, err := mxj.AnyXmlIndent(data,"", "   ")
+	m, err := mxj.AnyXmlIndent(data, "", "   ")
 	if err != nil {
 		fmt.Println(err)
 		return

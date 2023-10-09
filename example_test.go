@@ -9,10 +9,10 @@ package mxj_test
 
 import (
 /*
-	"bytes"
-	"fmt"
-	"github.com/clbanning/mxj"
-	"io"
+"bytes"
+"fmt"
+"github.com/clbanning/mxj"
+"io"
 */
 )
 

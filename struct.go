@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
-
 	// "github.com/fatih/structs"
 )
 
@@ -17,6 +16,7 @@ import (
 // for handling of "structs" tags.
 
 // DEPRECATED - import github.com/fatih/structs and cast result of structs.Map to mxj.Map.
+//
 //	import "github.com/fatih/structs"
 //	...
 //	   sm, err := structs.Map(<some struct>)
@@ -24,6 +24,7 @@ import (
 //	      // handle error
 //	   }
 //	   m := mxj.Map(sm)
+//
 // Alernatively uncomment the old source and import in struct.go.
 func NewMapStruct(structVal interface{}) (Map, error) {
 	return nil, errors.New("deprecated - see package documentation")
@@ -37,6 +38,7 @@ func NewMapStruct(structVal interface{}) (Map, error) {
 
 // Marshal a map[string]interface{} into a structure referenced by 'structPtr'. Error returned
 // if argument is not a pointer or if json.Unmarshal returns an error.
+//
 //	json.Unmarshal structure encoding rules are followed to encode public structure fields.
 func (mv Map) Struct(structPtr interface{}) error {
 	// should check that we're getting a pointer.

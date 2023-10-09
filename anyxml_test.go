@@ -109,7 +109,6 @@ func TestAnyXmlIndent(t *testing.T) {
 	fmt.Println("s->x:\n", string(x))
 }
 
-
 func TestNilMap(t *testing.T) {
 	XmlDefaultEmptyElemSyntax()
 	checkval := "<root/>"

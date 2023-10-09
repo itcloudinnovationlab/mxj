@@ -489,4 +489,3 @@ func TestValueForKeyError(t *testing.T) {
 		t.Fatal("no KeyNotExistError returned")
 	}
 }
-
